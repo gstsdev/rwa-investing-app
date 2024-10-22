@@ -80,4 +80,48 @@ describe("BLTM", function () {
     });
   });
 
+  describe("Burnable", function () {
+    it("Should allow owner to burn its own tokens", async function () {
+      const { erc20, owner } = await loadFixture(deployTokenFixture);
+
+      await erc20.mint(owner, 2);
+
+      const tx = await erc20.burn(1);
+
+      await tx.wait();
+
+      expect(await erc20.balanceOf(owner)).to.equal(1);
+    });
+
+    it("Should allow owner to burn tokens from another account", async function () {
+      const { erc20, otherAccount } = await loadFixture(deployTokenFixture);
+
+      await erc20.mint(otherAccount, 3);
+
+      const tx = await erc20.burnFrom(otherAccount, 1);
+
+      await tx.wait();
+
+      expect(await erc20.balanceOf(otherAccount)).to.equal(2);
+    });
+
+    it("Should prevent burning when caller is not assigned MINTER_ROLE", async function () {
+      const { erc20, otherAccount, MINTER_ROLE } = await loadFixture(
+        deployTokenFixture
+      );
+
+      expect(await erc20.hasRole(MINTER_ROLE, otherAccount)).to.be.false;
+
+      const BLTM = await hre.ethers.getContractAt(
+        "BLTM",
+        await erc20.getAddress(),
+        otherAccount
+      );
+
+      await expect(BLTM.burn(1)).to.reverted;
+
+      await expect(BLTM.burnFrom(otherAccount, 1)).to.reverted;
+    });
+  });
+
 });
