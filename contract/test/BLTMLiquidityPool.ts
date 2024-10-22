@@ -66,4 +66,25 @@ describe("BLTMLiquidityPool", function () {
       expect(await erc20.hasRole(ERC20_MINTER_ROLE, owner)).to.be.true;
     });
   });
+
+  describe("Exchange Rate", function () {
+    it("Should prevent updating the exchange rate if not assigned OWNER_ROLE", async function () {
+      const { pool, otherAccount, OWNER_ROLE } = await loadFixture(
+        deployPoolFixture
+      );
+
+      expect(
+        await pool.hasRole(OWNER_ROLE, otherAccount),
+        "account is assigned OWNER_ROLE"
+      ).to.be.false;
+
+      const LiquidityPool = await hre.ethers.getContractAt(
+        "BLTMLiquidityPool",
+        await pool.getAddress(),
+        otherAccount
+      );
+
+      await expect(LiquidityPool.updateExchangeRate(2)).to.reverted;
+    });
+  });
 });
