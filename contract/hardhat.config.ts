@@ -8,6 +8,14 @@ const config: HardhatUserConfig = {
       url: vars.get("POLYGON_AMOY_RPC", "https://rpc-amoy.polygon.technology"),
       accounts: [vars.get("ACCOUNT_PRIVATE_KEY")],
     },
+    hardhat: {
+      forking: {
+        url: vars.get(
+          "POLYGON_AMOY_RPC",
+          "https://rpc-amoy.polygon.technology"
+        ),
+      },
+    },
   },
 };
 
