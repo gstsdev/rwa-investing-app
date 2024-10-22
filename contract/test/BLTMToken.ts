@@ -1,14 +1,22 @@
 import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { expect } from "chai";
-import hre from "hardhat";
+import hre, { ignition } from "hardhat";
+import BLTMTokenModule from "../ignition/modules/BLTMToken";
 
 describe("BLTMToken", function () {
   async function deployTokenFixture() {
     // Contracts are deployed using the first signer/account by default
-    const [owner, otherAccount, otherAccount2] = await hre.ethers.getSigners();
+    const [owner, otherAccount] = await hre.ethers.getSigners();
 
-    const BLTM = await hre.ethers.getContractFactory("BLTM");
-    const erc20 = await BLTM.deploy(owner, owner, owner);
+    const { ERC20: erc20 } = await ignition.deploy(BLTMTokenModule, {
+      parameters: {
+        BLTMModule: {
+          defaultAdmin: owner.address,
+          pauser: owner.address,
+          minter: owner.address,
+        },
+      },
+    });
 
     const [DEFAULT_ADMIN_ROLE, MINTER_ROLE, PAUSER_ROLE] = await Promise.all([
       erc20.DEFAULT_ADMIN_ROLE(),
