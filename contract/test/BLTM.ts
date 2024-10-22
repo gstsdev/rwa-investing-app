@@ -54,4 +54,30 @@ describe("BLTM", function () {
     });
   });
 
+  describe("Mintable", function () {
+    it("Should mint tokens for the given account", async function () {
+      const { erc20, owner } = await loadFixture(deployTokenFixture);
+
+      await expect(erc20.mint(owner, 5)).not.to.reverted;
+
+      expect(await erc20.balanceOf(owner)).to.equal(5);
+    });
+
+    it("Should prevent minting when caller is not assigned MINTER_ROLE", async function () {
+      const { erc20, otherAccount, MINTER_ROLE } = await loadFixture(
+        deployTokenFixture
+      );
+
+      expect(await erc20.hasRole(MINTER_ROLE, otherAccount)).to.be.false;
+
+      const BLTM = await hre.ethers.getContractAt(
+        "BLTM",
+        await erc20.getAddress(),
+        otherAccount
+      );
+
+      await expect(BLTM.mint(otherAccount, 1)).to.reverted;
+    });
+  });
+
 });
