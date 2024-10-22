@@ -3,7 +3,7 @@
 
 import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
 
-const BLTM = buildModule("BLTMToken", (m) => {
+const BLTMTokenModule = buildModule("BLTMToken", (m) => {
   const defaultAdmin = m.getParameter("defaultAdmin", m.getAccount(0));
   const pauser = m.getParameter("pauser", m.getAccount(0));
   const minter = m.getParameter("minter", m.getAccount(0));
@@ -13,4 +13,4 @@ const BLTM = buildModule("BLTMToken", (m) => {
   return { ERC20 };
 });
 
-export default BLTM;
+export default BLTMTokenModule;

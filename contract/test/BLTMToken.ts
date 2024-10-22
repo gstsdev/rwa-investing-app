@@ -2,7 +2,7 @@ import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { expect } from "chai";
 import hre from "hardhat";
 
-describe("BLTM", function () {
+describe("BLTMToken", function () {
   async function deployTokenFixture() {
     // Contracts are deployed using the first signer/account by default
     const [owner, otherAccount, otherAccount2] = await hre.ethers.getSigners();
