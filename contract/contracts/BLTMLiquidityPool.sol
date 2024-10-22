@@ -16,10 +16,10 @@ contract BLTMLiquidityPool is Context, AccessControl {
         address usdcTokenAddress_,
         uint256 exchangeRate_
     ) {
+        _grantRole(OWNER_ROLE, _msgSender());
+
         BLTM = IERC20(erc20TokenAddress_);
         USDC = IERC20(usdcTokenAddress_);
         exchangeRate = exchangeRate_;
-
-        _grantRole(OWNER_ROLE, _msgSender());
     }
 }
