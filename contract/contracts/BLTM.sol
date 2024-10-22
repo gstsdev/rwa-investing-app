@@ -40,14 +40,14 @@ contract BLTM is ERC20, ERC20Burnable, ERC20Pausable, AccessControl {
 
     function burn(
         uint256 value
-    ) public virtual override(ERC20Burnable) onlyRole(MINTER_ROLE) {
+    ) public virtual override(ERC20Burnable) onlyRole(MINTER_ROLE) whenNotPaused {
         super.burn(value);
     }
 
     function burnFrom(
         address account,
         uint256 value
-    ) public virtual override(ERC20Burnable) onlyRole(MINTER_ROLE) {
+    ) public virtual override(ERC20Burnable) onlyRole(MINTER_ROLE) whenNotPaused {
         _burn(account, value);
     }
 
