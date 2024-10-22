@@ -124,4 +124,100 @@ describe("BLTM", function () {
     });
   });
 
+  describe("Pausable", function () {
+    it("Should not be paused by accounts without PAUSER_ROLE", async function () {
+      const { erc20, otherAccount, PAUSER_ROLE } = await loadFixture(
+        deployTokenFixture
+      );
+
+      expect(await erc20.hasRole(PAUSER_ROLE, otherAccount)).to.be.false;
+
+      const BLTM = await hre.ethers.getContractAt(
+        "BLTM",
+        await erc20.getAddress(),
+        otherAccount
+      );
+
+      await expect(BLTM.pause()).to.reverted;
+    });
+
+    it("Should prevent minting when contract is paused", async function () {
+      const { erc20, owner } = await loadFixture(deployTokenFixture);
+
+      const tx = await erc20.pause();
+
+      await tx.wait();
+
+      expect(await erc20.paused()).to.be.true;
+
+      await expect(erc20.mint(owner, 1)).to.revertedWithCustomError(
+        erc20,
+        "EnforcedPause"
+      );
+    });
+
+    it("Should allow minting when contract has been unpaused", async function () {
+      const { erc20, owner } = await loadFixture(deployTokenFixture);
+
+      const tx1 = await erc20.pause();
+
+      await tx1.wait();
+
+      expect(await erc20.paused()).to.be.true;
+
+      const tx2 = await erc20.unpause();
+
+      await tx2.wait();
+
+      expect(await erc20.paused()).to.be.false;
+
+      await expect(erc20.mint(owner, 1)).to.not.reverted;
+    });
+
+    it("Should prevent burning when contract is paused", async function () {
+      const { erc20, otherAccount } = await loadFixture(deployTokenFixture);
+
+      const mintTx = await erc20.mint(otherAccount, 2);
+
+      await mintTx.wait();
+
+      const pauseTx = await erc20.pause();
+
+      await pauseTx.wait();
+
+      expect(await erc20.paused()).to.be.true;
+
+      await expect(erc20.burnFrom(otherAccount, 1)).to.revertedWithCustomError(
+        erc20,
+        "EnforcedPause"
+      );
+    });
+
+    it("Should allow burning when contract has been unpaused", async function () {
+      const { erc20, otherAccount } = await loadFixture(deployTokenFixture);
+
+      const mintTx = await erc20.mint(otherAccount, 2);
+
+      await mintTx.wait();
+
+      const pauseTx = await erc20.pause();
+
+      await pauseTx.wait();
+
+      expect(await erc20.paused()).to.be.true;
+
+      await expect(erc20.burnFrom(otherAccount, 1)).to.revertedWithCustomError(
+        erc20,
+        "EnforcedPause"
+      );
+
+      const unpauseTx = await erc20.unpause();
+
+      await unpauseTx.wait();
+
+      expect(await erc20.paused()).to.be.false;
+
+      await expect(erc20.burnFrom(otherAccount, 1)).not.to.reverted;
+    });
+  });
 });
