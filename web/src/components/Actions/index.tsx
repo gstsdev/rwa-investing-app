@@ -9,6 +9,7 @@ import { ArrowRightIcon } from "lucide-react";
 import React, { FunctionComponent } from "react";
 import { twMerge } from "tailwind-merge";
 import { useReadContract } from "wagmi";
+import ActionButton from "./ActionButton";
 
 interface ActionsProps {
   className?: string;
@@ -54,21 +55,3 @@ const Actions: FunctionComponent<ActionsProps> = ({ className }) => {
 };
 
 export default Actions;
-
-interface ActionButtonProps {
-  children?: React.ReactNode;
-  className?: string;
-}
-
-function ActionButton({ children, className }: ActionButtonProps) {
-  return (
-    <button
-      className={twMerge(
-        "flex-1 text-xl font-sans font-medium bg-sky-900 hover:bg-sky-800 transition rounded-full py-2 px-3",
-        className
-      )}
-    >
-      {children}
-    </button>
-  );
-}
