@@ -22,6 +22,9 @@ In this app, you can exchange ("Deposit") USDC for BLTM (the app token) and exch
 
 ## Setup
 
+- Prerequisites:
+  * Node.js 18.x
+
 From the root folder of the project:
 
 1. Run `npm install`
