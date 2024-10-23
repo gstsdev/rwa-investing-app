@@ -181,6 +181,57 @@ describe("BLTMLiquidityPool", function () {
         .reverted;
     });
   });
+
+  describe("Withdrawals", function () {
+    it("Should withdraw the given USDC amount to the caller if it is a owner", async function () {
+      const { pool, owner, otherAccount, USDC_CONTRACT_ADDRESS } =
+        await loadFixture(deployPoolFixture);
+
+      const { USDC, usdcToExchange } = await exchangeUsdc(
+        pool,
+        otherAccount,
+        USDC_CONTRACT_ADDRESS,
+        5
+      );
+
+      const currentOwnerUsdcBalance = await USDC.balanceOf(owner);
+
+      const withdrawTx = await pool.withdrawUsdc(usdcToExchange);
+
+      await withdrawTx.wait();
+
+      const newOwnerUsdcBalance =
+        hre.ethers.toNumber(currentOwnerUsdcBalance) + usdcToExchange;
+
+      expect(await USDC.balanceOf(owner)).to.equal(newOwnerUsdcBalance);
+    });
+
+    it("Should revert if there is no USDC to withdraw", async function () {
+      const { pool, otherAccount, USDC_CONTRACT_ADDRESS } = await loadFixture(
+        deployPoolFixture
+      );
+
+      await exchangeUsdc(pool, otherAccount, USDC_CONTRACT_ADDRESS, 0);
+
+      expect(pool.withdrawUsdc(getUSDCValue(5))).to.reverted;
+    });
+
+    it("Should prevent USDC withdrawal if the caller is not assigned OWNER_ROLE", async function () {
+      const { pool, otherAccount, OWNER_ROLE, USDC_CONTRACT_ADDRESS } =
+        await loadFixture(deployPoolFixture);
+
+      expect(await pool.hasRole(OWNER_ROLE, otherAccount)).to.be.false;
+
+      const { LiquidityPool, usdcToExchange } = await exchangeUsdc(
+        pool,
+        otherAccount,
+        USDC_CONTRACT_ADDRESS,
+        5
+      );
+
+      await expect(LiquidityPool.withdrawUsdc(usdcToExchange)).to.reverted;
+    });
+  });
 });
 
 async function exchangeUsdc(
