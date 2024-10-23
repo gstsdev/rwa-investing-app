@@ -174,6 +174,26 @@ describe("BLTMToken", function () {
       await expect(BLTM.pause()).to.reverted;
     });
 
+    it("Should not be unpaused by accounts without PAUSER_ROLE", async function () {
+      const { erc20, otherAccount, PAUSER_ROLE } = await loadFixture(
+        deployTokenFixture
+      );
+
+      const tx = await erc20.pause();
+
+      await tx.wait();
+
+      expect(await erc20.hasRole(PAUSER_ROLE, otherAccount)).to.be.false;
+
+      const BLTM = await hre.ethers.getContractAt(
+        "BLTM",
+        await erc20.getAddress(),
+        otherAccount
+      );
+
+      await expect(BLTM.unpause()).to.reverted;
+    });
+
     it("Should prevent minting when contract is paused", async function () {
       const { erc20, owner } = await loadFixture(deployTokenFixture);
 
