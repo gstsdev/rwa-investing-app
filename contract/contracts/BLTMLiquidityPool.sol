@@ -31,6 +31,11 @@ contract BLTMLiquidityPool is Context, AccessControl {
     function updateExchangeRate(
         uint256 exchangeRate_
     ) public onlyRole(OWNER_ROLE) {
+        require(
+            exchangeRate_ > 0,
+            "Exchange rate cannot be less or equal to 0"
+        );
+
         exchangeRate = exchangeRate_;
     }
 
