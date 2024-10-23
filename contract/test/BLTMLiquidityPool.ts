@@ -5,6 +5,7 @@ import BLTMLiquidityPoolModule from "../ignition/modules/BLTMLiquidityPool";
 import ERC20Abi from "./ERC20-Abi.json";
 
 import { contracts } from "../typechain-types";
+import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 
 describe("BLTMLiquidityPool", function () {
   async function deployPoolFixture() {
@@ -97,33 +98,12 @@ describe("BLTMLiquidityPool", function () {
       const { erc20, pool, otherAccount, exchangeRate, USDC_CONTRACT_ADDRESS } =
         await loadFixture(deployPoolFixture);
 
-      const LiquidityPool = await hre.ethers.getContractAt(
-        "BLTMLiquidityPool",
-        await pool.getAddress(),
-        otherAccount
-      );
-
-      const USDC = new hre.ethers.Contract(
+      const { usdcToExchange } = await exchangeUsdc(
+        pool,
+        otherAccount,
         USDC_CONTRACT_ADDRESS,
-        ERC20Abi,
-        otherAccount
+        5
       );
-
-      const usdcBalance = await USDC.balanceOf(otherAccount);
-
-      expect(usdcBalance).not.to.equal(0);
-
-      const usdcToExchange = getUSDCValue(5);
-
-      const approveTx = await USDC.approve(LiquidityPool, usdcToExchange);
-
-      await approveTx.wait();
-
-      const exchangeTx = await LiquidityPool.exchangeUsdcForToken(
-        usdcToExchange
-      );
-
-      await exchangeTx.wait();
 
       expect(await erc20.balanceOf(otherAccount)).to.equal(
         usdcToExchange * exchangeRate
@@ -152,42 +132,17 @@ describe("BLTMLiquidityPool", function () {
       const { erc20, pool, otherAccount, exchangeRate, USDC_CONTRACT_ADDRESS } =
         await loadFixture(deployPoolFixture);
 
+      const { LiquidityPool, USDC, usdcBalance, usdcToExchange } =
+        await exchangeUsdc(pool, otherAccount, USDC_CONTRACT_ADDRESS, 5);
+
+      const tokenBalance = usdcToExchange * exchangeRate;
+      const tokensToExchange = tokenBalance / 2;
+
       const ERC20 = await hre.ethers.getContractAt(
         "BLTM",
         await erc20.getAddress(),
         otherAccount
       );
-
-      const LiquidityPool = await hre.ethers.getContractAt(
-        "BLTMLiquidityPool",
-        await pool.getAddress(),
-        otherAccount
-      );
-
-      const USDC = new hre.ethers.Contract(
-        USDC_CONTRACT_ADDRESS,
-        ERC20Abi,
-        otherAccount
-      );
-
-      const usdcBalance = await USDC.balanceOf(otherAccount);
-
-      expect(usdcBalance).not.to.equal(0);
-
-      const usdcToExchange = getUSDCValue(5);
-
-      const approveUsdcTx = await USDC.approve(LiquidityPool, usdcToExchange);
-
-      await approveUsdcTx.wait();
-
-      const exchangeUsdcTx = await LiquidityPool.exchangeUsdcForToken(
-        usdcToExchange
-      );
-
-      await exchangeUsdcTx.wait();
-
-      const tokenBalance = usdcToExchange * exchangeRate;
-      const tokensToExchange = tokenBalance / 2;
 
       const approveTokenTx = await ERC20.approve(
         LiquidityPool,
@@ -227,6 +182,37 @@ describe("BLTMLiquidityPool", function () {
     });
   });
 });
+
+async function exchangeUsdc(
+  pool: contracts.bltmLiquidityPoolSol.BLTMLiquidityPool,
+  account: HardhatEthersSigner,
+  usdcContractAddress: string,
+  usdcAmount: number
+) {
+  const LiquidityPool = await hre.ethers.getContractAt(
+    "BLTMLiquidityPool",
+    await pool.getAddress(),
+    account
+  );
+
+  const USDC = new hre.ethers.Contract(usdcContractAddress, ERC20Abi, account);
+
+  const usdcToExchange = getUSDCValue(usdcAmount);
+
+  const usdcBalance = await USDC.balanceOf(account);
+
+  const approveUsdcTx = await USDC.approve(LiquidityPool, usdcToExchange);
+
+  await approveUsdcTx.wait();
+
+  const exchangeUsdcTx = await LiquidityPool.exchangeUsdcForToken(
+    usdcToExchange
+  );
+
+  await exchangeUsdcTx.wait();
+
+  return { LiquidityPool, USDC, usdcBalance, usdcToExchange };
+}
 
 function getUSDCValue(value: number) {
   return value * 10 ** 6;
