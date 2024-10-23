@@ -10,7 +10,7 @@ import React, { FunctionComponent, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { useAccount, useReadContract } from "wagmi";
 import ActionButton from "./ActionButton";
-import DepositForm from "./DepositForm";
+import ExchangeForm from "./ExchangeForm";
 import useDepositUsdc from "@/hooks/useDepositUsdc";
 import { parseUnits } from "viem";
 
@@ -69,12 +69,14 @@ const Actions: FunctionComponent<ActionsProps> = ({ className }) => {
 
       <div className="flex gap-3 mt-10">
         {showDepositForm ? (
-          <DepositForm
+          <ExchangeForm
             sourceToken={{ symbol: "USDC", decimals: 6 }}
             destToken={{ symbol: bltmSymbol, decimals: 6 }}
             exchangeRate={Number(bltmExchangeRate.data || 0)}
-            isDepositing={isDepositing}
-            onDeposit={handleDepositUsdc}
+            exchangingLabel="Depositing..."
+            buttonLabel="Deposit"
+            isExchanging={isDepositing}
+            onExchange={handleDepositUsdc}
             onClose={() => toggleDepositForm(false)}
           />
         ) : (

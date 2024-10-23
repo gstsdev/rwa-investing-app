@@ -3,21 +3,25 @@ import ActionButton from "./ActionButton";
 import Form from "../Form";
 import { ArrowLeftIcon } from "lucide-react";
 
-interface DepositFormProps {
+interface ExchangeFormProps {
   sourceToken: { symbol: string; decimals: number };
   destToken: { symbol: string; decimals: number };
   exchangeRate: number;
-  isDepositing: boolean;
-  onDeposit(value: string): any;
+  exchangingLabel?: string;
+  buttonLabel?: string;
+  isExchanging: boolean;
+  onExchange(value: string): any;
   onClose(): any;
 }
 
-const DepositForm: FunctionComponent<DepositFormProps> = ({
+const ExchangeForm: FunctionComponent<ExchangeFormProps> = ({
   sourceToken,
   destToken,
   exchangeRate,
-  isDepositing,
-  onDeposit,
+  exchangingLabel = "Exchanging...",
+  buttonLabel = "Exchange",
+  isExchanging,
+  onExchange,
   onClose,
 }) => {
   const [sourceTokenAmount, _setSourceTokenAmount] = useState<string>("1");
@@ -47,7 +51,7 @@ const DepositForm: FunctionComponent<DepositFormProps> = ({
   function handleFormSubmit(ev: React.FormEvent<HTMLFormElement>) {
     ev.preventDefault();
 
-    onDeposit(sourceTokenAmount);
+    onExchange(sourceTokenAmount);
   }
 
   return (
@@ -95,16 +99,16 @@ const DepositForm: FunctionComponent<DepositFormProps> = ({
           variant="secondary"
           type="submit"
           className="w-full mt-2"
-          disabled={isDepositing}
+          disabled={isExchanging}
         >
-          {isDepositing ? "Depositing..." : "Deposit"}
+          {isExchanging ? exchangingLabel : buttonLabel}
         </ActionButton>
       </form>
     </div>
   );
 };
 
-export default DepositForm;
+export default ExchangeForm;
 
 function _normalizeAmount(amount: any, decimals: number) {
   let value = `${amount || "0"}`;
