@@ -7,6 +7,8 @@ interface DepositFormProps {
   sourceToken: { symbol: string; decimals: number };
   destToken: { symbol: string; decimals: number };
   exchangeRate: number;
+  isDepositing: boolean;
+  onDeposit(value: string): any;
   onClose(): any;
 }
 
@@ -14,6 +16,8 @@ const DepositForm: FunctionComponent<DepositFormProps> = ({
   sourceToken,
   destToken,
   exchangeRate,
+  isDepositing,
+  onDeposit,
   onClose,
 }) => {
   const [sourceTokenAmount, _setSourceTokenAmount] = useState<string>("1");
@@ -40,6 +44,12 @@ const DepositForm: FunctionComponent<DepositFormProps> = ({
     _setSourceTokenAmount(`${+value / exchangeRate}`);
   }
 
+  function handleFormSubmit(ev: React.FormEvent<HTMLFormElement>) {
+    ev.preventDefault();
+
+    onDeposit(sourceTokenAmount);
+  }
+
   return (
     <div className="w-full flex flex-col bg-black-100 p-2 rounded-lg">
       <div className="flex mb-2">
@@ -52,7 +62,7 @@ const DepositForm: FunctionComponent<DepositFormProps> = ({
         </button>
       </div>
 
-      <form>
+      <form onSubmit={handleFormSubmit}>
         <Form.Group>
           <Form.Label htmlFor="sourceValue">{sourceToken.symbol}</Form.Label>
 
@@ -81,8 +91,13 @@ const DepositForm: FunctionComponent<DepositFormProps> = ({
           />
         </Form.Group>
 
-        <ActionButton variant="secondary" type="submit" className="w-full mt-2">
-          Deposit
+        <ActionButton
+          variant="secondary"
+          type="submit"
+          className="w-full mt-2"
+          disabled={isDepositing}
+        >
+          {isDepositing ? "Depositing..." : "Deposit"}
         </ActionButton>
       </form>
     </div>

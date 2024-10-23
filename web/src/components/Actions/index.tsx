@@ -11,6 +11,8 @@ import { twMerge } from "tailwind-merge";
 import { useAccount, useReadContract } from "wagmi";
 import ActionButton from "./ActionButton";
 import DepositForm from "./DepositForm";
+import useDepositUsdc from "@/hooks/useDepositUsdc";
+import { parseUnits } from "viem";
 
 interface ActionsProps {
   className?: string;
@@ -36,7 +38,19 @@ const Actions: FunctionComponent<ActionsProps> = ({ className }) => {
     },
   });
 
-  const [isDepositing, setDepositing] = useState(false);
+  const [showDepositForm, toggleDepositForm] = useState(false);
+
+  const { depositUsdc, isPending: isDepositing } = useDepositUsdc({
+    onSuccess() {
+      toggleDepositForm(false);
+    },
+  });
+
+  function handleDepositUsdc(value: string) {
+    const unitValue = parseUnits(value, 6);
+
+    depositUsdc({ usdcAmount: unitValue });
+  }
 
   return (
     <div
@@ -54,18 +68,20 @@ const Actions: FunctionComponent<ActionsProps> = ({ className }) => {
       </div>
 
       <div className="flex gap-3 mt-10">
-        {isDepositing ? (
+        {showDepositForm ? (
           <DepositForm
             sourceToken={{ symbol: "USDC", decimals: 6 }}
             destToken={{ symbol: bltmSymbol, decimals: 6 }}
             exchangeRate={Number(bltmExchangeRate.data || 0)}
-            onClose={() => setDepositing(false)}
+            isDepositing={isDepositing}
+            onDeposit={handleDepositUsdc}
+            onClose={() => toggleDepositForm(false)}
           />
         ) : (
           <>
             <ActionButton
               disabled={disabled}
-              onClick={() => setDepositing(true)}
+              onClick={() => toggleDepositForm(true)}
             >
               Deposit
             </ActionButton>
