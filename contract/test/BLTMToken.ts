@@ -104,16 +104,38 @@ describe("BLTMToken", function () {
       expect(await erc20.balanceOf(owner)).to.equal(1);
     });
 
-    it("Should allow owner to burn tokens from another account", async function () {
-      const { erc20, otherAccount } = await loadFixture(deployTokenFixture);
+    it("Should allow owner to burn tokens from another account if approved", async function () {
+      const { erc20, owner, otherAccount } = await loadFixture(
+        deployTokenFixture
+      );
 
-      await erc20.mint(otherAccount, 3);
+      const mintTx = await erc20.mint(otherAccount, 3);
+
+      await mintTx.wait();
+
+      const ERC20 = await hre.ethers.getContractAt(
+        "BLTM",
+        await erc20.getAddress(),
+        otherAccount
+      );
+
+      const approveTx = await ERC20.approve(owner, 1);
+
+      await approveTx.wait();
 
       const tx = await erc20.burnFrom(otherAccount, 1);
 
       await tx.wait();
 
       expect(await erc20.balanceOf(otherAccount)).to.equal(2);
+    });
+
+    it("Should prevent owner to burn tokens from another account if not approved", async function () {
+      const { erc20, otherAccount } = await loadFixture(deployTokenFixture);
+
+      await erc20.mint(otherAccount, 3);
+
+      await expect(erc20.burnFrom(otherAccount, 1)).to.reverted;
     });
 
     it("Should prevent burning when caller is not assigned MINTER_ROLE", async function () {
@@ -205,11 +227,23 @@ describe("BLTMToken", function () {
     });
 
     it("Should allow burning when contract has been unpaused", async function () {
-      const { erc20, otherAccount } = await loadFixture(deployTokenFixture);
+      const { erc20, owner, otherAccount } = await loadFixture(
+        deployTokenFixture
+      );
 
       const mintTx = await erc20.mint(otherAccount, 2);
 
       await mintTx.wait();
+
+      const ERC20 = await hre.ethers.getContractAt(
+        "BLTM",
+        await erc20.getAddress(),
+        otherAccount
+      );
+
+      const approveTx = await ERC20.approve(owner, 1);
+
+      await approveTx.wait();
 
       const pauseTx = await erc20.pause();
 
