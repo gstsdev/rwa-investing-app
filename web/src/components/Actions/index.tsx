@@ -13,6 +13,7 @@ import ActionButton from "./ActionButton";
 import ExchangeForm from "./ExchangeForm";
 import useDepositUsdc from "@/hooks/useDepositUsdc";
 import { parseUnits } from "viem";
+import useWithdrawUsdc from "@/hooks/useWithdrawUsdc";
 
 interface ActionsProps {
   className?: string;
@@ -39,6 +40,7 @@ const Actions: FunctionComponent<ActionsProps> = ({ className }) => {
   });
 
   const [showDepositForm, toggleDepositForm] = useState(false);
+  const [showWithdrawalForm, toggleWithdrawalForm] = useState(false);
 
   const { depositUsdc, isPending: isDepositing } = useDepositUsdc({
     onSuccess() {
@@ -46,10 +48,22 @@ const Actions: FunctionComponent<ActionsProps> = ({ className }) => {
     },
   });
 
+  const { withdrawUsdc, isPending: isWithdrawing } = useWithdrawUsdc({
+    onSuccess() {
+      toggleWithdrawalForm(false);
+    },
+  });
+
   function handleDepositUsdc(value: string) {
     const unitValue = parseUnits(value, 6);
 
     depositUsdc({ usdcAmount: unitValue });
+  }
+
+  function handleWithdrawUsdc(value: string) {
+    const unitValue = parseUnits(value, 6);
+
+    withdrawUsdc({ bltmAmount: unitValue });
   }
 
   return (
@@ -79,6 +93,17 @@ const Actions: FunctionComponent<ActionsProps> = ({ className }) => {
             onExchange={handleDepositUsdc}
             onClose={() => toggleDepositForm(false)}
           />
+        ) : showWithdrawalForm ? (
+          <ExchangeForm
+            sourceToken={{ symbol: bltmSymbol, decimals: 6 }}
+            destToken={{ symbol: "USDC", decimals: 6 }}
+            exchangeRate={1 / Number(bltmExchangeRate.data || 1)}
+            exchangingLabel="Withdrawing..."
+            buttonLabel="Withdraw"
+            isExchanging={isWithdrawing}
+            onExchange={handleWithdrawUsdc}
+            onClose={() => toggleWithdrawalForm(false)}
+          />
         ) : (
           <>
             <ActionButton
@@ -87,7 +112,12 @@ const Actions: FunctionComponent<ActionsProps> = ({ className }) => {
             >
               Deposit
             </ActionButton>
-            <ActionButton disabled={disabled}>Withdraw</ActionButton>
+            <ActionButton
+              disabled={disabled}
+              onClick={() => toggleWithdrawalForm(true)}
+            >
+              Withdraw
+            </ActionButton>
           </>
         )}
       </div>
