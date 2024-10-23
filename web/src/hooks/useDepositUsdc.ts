@@ -13,7 +13,7 @@ import { erc20Abi } from "viem";
 import { useConfig } from "wagmi";
 
 interface DepositUsdcOptions {
-  onSuccess?(): any;
+  onSuccess?(): unknown;
 }
 
 export default function useDepositUsdc({ onSuccess }: DepositUsdcOptions = {}) {

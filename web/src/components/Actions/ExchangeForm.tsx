@@ -10,8 +10,8 @@ interface ExchangeFormProps {
   exchangingLabel?: string;
   buttonLabel?: string;
   isExchanging: boolean;
-  onExchange(value: string): any;
-  onClose(): any;
+  onExchange(value: string): unknown;
+  onClose(): unknown;
 }
 
 const ExchangeForm: FunctionComponent<ExchangeFormProps> = ({
@@ -29,20 +29,20 @@ const ExchangeForm: FunctionComponent<ExchangeFormProps> = ({
     () => +sourceTokenAmount * exchangeRate
   );
   const valueStep = useMemo(() => {
-    let decimalPlaces = `${sourceTokenAmount}`.split(".")[1]?.length ?? 0;
+    const decimalPlaces = `${sourceTokenAmount}`.split(".")[1]?.length ?? 0;
 
     return 1 / 10 ** decimalPlaces;
   }, [sourceTokenAmount]);
 
-  function setSourceTokenAmount(amount: any) {
-    let value = _normalizeAmount(amount, sourceToken.decimals);
+  function setSourceTokenAmount(amount: unknown) {
+    const value = _normalizeAmount(amount, sourceToken.decimals);
 
     _setSourceTokenAmount(value);
     _setDestTokenAmount(+value * exchangeRate);
   }
 
-  function setDestTokenAmount(amount: any) {
-    let value = _normalizeAmount(amount, destToken.decimals);
+  function setDestTokenAmount(amount: unknown) {
+    const value = _normalizeAmount(amount, destToken.decimals);
 
     _setDestTokenAmount(+value);
     _setSourceTokenAmount(`${+value / exchangeRate}`);
@@ -110,7 +110,7 @@ const ExchangeForm: FunctionComponent<ExchangeFormProps> = ({
 
 export default ExchangeForm;
 
-function _normalizeAmount(amount: any, decimals: number) {
+function _normalizeAmount(amount: unknown, decimals: number) {
   let value = `${amount || "0"}`;
 
   if (value.match(/^\d+$/)) {

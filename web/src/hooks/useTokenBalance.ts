@@ -3,16 +3,14 @@
 import { erc20Abi } from "viem";
 import { useAccount, useReadContracts } from "wagmi";
 
-type TokenBalanceOptions =
-  | {}
-  | {
-      defaultSymbol: string;
-      defaultDecimals?: number;
-    };
+type TokenBalanceOptions = {
+  defaultSymbol: string;
+  defaultDecimals?: number;
+};
 
 export default function useTokenBalance(
   tokenAddress: `0x${string}`,
-  options: TokenBalanceOptions = {}
+  options?: TokenBalanceOptions
 ) {
   const { address } = useAccount();
 
@@ -47,11 +45,12 @@ export default function useTokenBalance(
         decimals: result.data[1],
         symbol: result.data[2],
       }
-    : ("defaultSymbol" in options && {
-        value: BigInt(0),
-        decimals: options.defaultDecimals,
-        symbol: options.defaultSymbol,
-      }) ||
+    : (options &&
+        "defaultSymbol" in options && {
+          value: BigInt(0),
+          decimals: options.defaultDecimals,
+          symbol: options.defaultSymbol,
+        }) ||
       undefined;
 
   return { ...result, data };

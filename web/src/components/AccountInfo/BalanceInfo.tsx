@@ -5,6 +5,7 @@ import { twMerge } from "tailwind-merge";
 import { formatUnits } from "viem";
 import { useAccount } from "wagmi";
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface BalanceInfoProps {}
 
 const BalanceInfo: FunctionComponent<BalanceInfoProps> = ({}) => {

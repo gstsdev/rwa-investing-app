@@ -1,7 +1,6 @@
 import {
   BLTM_CONTRACT_ADDRESS,
   BLTM_POOL_CONTRACT_ADDRESS,
-  USDC_CONTRACT_ADDRESS,
 } from "@/lib/contracts/addresses";
 import BLTMLiquidityPoolContract from "@/lib/contracts/BLTMLiquidityPool";
 import { useMutation } from "@tanstack/react-query";
@@ -14,7 +13,7 @@ import { erc20Abi } from "viem";
 import { useConfig } from "wagmi";
 
 interface WithdrawUsdcOptions {
-  onSuccess?(): any;
+  onSuccess?(): unknown;
 }
 
 export default function useWithdrawUsdc({

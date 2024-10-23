@@ -5,6 +5,7 @@ import ConnectButton from "./ConnectButton";
 import WalletInfo from "./WalletInfo";
 import BalanceInfo from "./BalanceInfo";
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface AccountInfoProps {}
 
 const AccountInfo: FunctionComponent<AccountInfoProps> = ({}) => {

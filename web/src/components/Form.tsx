@@ -5,7 +5,7 @@ type NativeFieldsetProps = JSX.IntrinsicElements["fieldset"];
 type NativeLabelProps = JSX.IntrinsicElements["label"];
 type NativeInputProps = JSX.IntrinsicElements["input"];
 
-interface FormGroupProps extends NativeFieldsetProps {}
+type FormGroupProps = NativeFieldsetProps;
 
 const FormGroup: FunctionComponent<FormGroupProps> = ({
   className,
@@ -19,7 +19,7 @@ const FormGroup: FunctionComponent<FormGroupProps> = ({
   );
 };
 
-interface FormLabelProps extends NativeLabelProps {}
+type FormLabelProps = NativeLabelProps;
 
 const FormLabel: FunctionComponent<FormLabelProps> = ({
   className,
@@ -30,7 +30,7 @@ const FormLabel: FunctionComponent<FormLabelProps> = ({
   );
 };
 
-interface FormInputProps extends NativeInputProps {}
+type FormInputProps = NativeInputProps;
 
 const FormInput: FunctionComponent<FormInputProps> = ({
   className,
