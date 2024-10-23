@@ -14,6 +14,10 @@ const AccountInfo: FunctionComponent<AccountInfoProps> = ({}) => {
         <ConnectButton />
         <WalletInfo />
       </div>
+
+      <div className="mt-2 w-full">
+        <BalanceInfo />
+      </div>
     </div>
   );
 };
