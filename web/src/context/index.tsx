@@ -10,7 +10,7 @@ import {
 import { createAppKit } from "@reown/appkit/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React, { type FunctionComponent } from "react";
-import { cookieToInitialState, WagmiProvider } from "wagmi";
+import { WagmiProvider } from "wagmi";
 
 const queryClient = new QueryClient();
 
@@ -37,17 +37,11 @@ const _modal = createAppKit({
 
 interface ProvidersProps {
   children: React.ReactNode;
-  cookies: string | null;
 }
 
-const ContextProviders: FunctionComponent<ProvidersProps> = ({
-  children,
-  cookies,
-}) => {
-  const initialState = cookieToInitialState(config, cookies);
-
+const ContextProviders: FunctionComponent<ProvidersProps> = ({ children }) => {
   return (
-    <WagmiProvider config={config} initialState={initialState}>
+    <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </WagmiProvider>
   );
