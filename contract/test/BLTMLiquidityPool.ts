@@ -70,6 +70,12 @@ describe("BLTMLiquidityPool", function () {
 
       expect(await erc20.hasRole(ERC20_MINTER_ROLE, owner)).to.be.true;
     });
+
+    it("Should match the exchange rate passed in the contructor", async function () {
+      const { pool, exchangeRate } = await loadFixture(deployPoolFixture);
+
+      expect(await pool.exchangeRate()).to.equal(exchangeRate);
+    });
   });
 
   describe("Exchange Rate", function () {
