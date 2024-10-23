@@ -8,7 +8,7 @@ import BLTMLiquidityPoolContract from "@/lib/contracts/BLTMLiquidityPool";
 import { ArrowRightIcon } from "lucide-react";
 import React, { FunctionComponent, useState } from "react";
 import { twMerge } from "tailwind-merge";
-import { useReadContract } from "wagmi";
+import { useAccount, useReadContract } from "wagmi";
 import ActionButton from "./ActionButton";
 import DepositForm from "./DepositForm";
 
@@ -17,6 +17,10 @@ interface ActionsProps {
 }
 
 const Actions: FunctionComponent<ActionsProps> = ({ className }) => {
+  const { isConnected } = useAccount();
+
+  const disabled = !isConnected;
+
   const { data: bltmSymbol } = useTokenSymbol(
     BLTM_CONTRACT_ADDRESS as `0x${string}`,
     "BLTM"
@@ -58,10 +62,13 @@ const Actions: FunctionComponent<ActionsProps> = ({ className }) => {
           />
         ) : (
           <>
-            <ActionButton onClick={() => setDepositing(true)}>
+            <ActionButton
+              disabled={disabled}
+              onClick={() => setDepositing(true)}
+            >
               Deposit
             </ActionButton>
-            <ActionButton>Withdraw</ActionButton>
+            <ActionButton disabled={disabled}>Withdraw</ActionButton>
           </>
         )}
       </div>
