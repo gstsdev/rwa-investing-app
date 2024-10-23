@@ -1,8 +1,5 @@
 import useTokenBalance from "@/hooks/useTokenBalance";
-import {
-  BLTM_CONTRACT_ADDRESS,
-  USDC_CONTRACT_ADDRESS,
-} from "@/lib/contracts/addresses";
+import { BLTM_CONTRACT_ADDRESS } from "@/lib/contracts/addresses";
 import { FunctionComponent } from "react";
 import { twMerge } from "tailwind-merge";
 import { formatUnits } from "viem";
