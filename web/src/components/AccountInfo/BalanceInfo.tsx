@@ -12,20 +12,19 @@ interface BalanceInfoProps {}
 
 const BalanceInfo: FunctionComponent<BalanceInfoProps> = ({}) => {
   const { isConnected } = useAccount();
-  const usdcBalance = useTokenBalance(USDC_CONTRACT_ADDRESS as `0x${string}`, {
-    defaultDecimals: 6,
-    defaultSymbol: "USDC",
-  });
+  // const usdcBalance = useTokenBalance(USDC_CONTRACT_ADDRESS as `0x${string}`, {
+  //   defaultDecimals: 6,
+  //   defaultSymbol: "USDC",
+  // });
   const bltmBalance = useTokenBalance(BLTM_CONTRACT_ADDRESS as `0x${string}`, {
     defaultDecimals: 6,
     defaultSymbol: "BLTM",
   });
 
-  const balances = [usdcBalance, bltmBalance]
+  const balances = [bltmBalance]
     .map((balance) => balance.data)
     .filter((data): data is NonNullable<typeof data> => data != null);
-  const disabled =
-    !isConnected || usdcBalance.isLoading || bltmBalance.isLoading;
+  const disabled = !isConnected || bltmBalance.isLoading;
 
   return (
     <div
