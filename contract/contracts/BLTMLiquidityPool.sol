@@ -8,8 +8,16 @@ interface Mintable {
     function mint(address to, uint256 amount) external;
 }
 
+interface Burnable {
+    function burn(uint256 value) external;
+
+    function burnFrom(address account, uint256 value) external;
+}
+
 contract BLTMLiquidityPool is Context, AccessControl {
     bytes32 public constant OWNER_ROLE = keccak256("OWNER_ROLE");
+    uint256 internal constant _royaltyFractionNumerator = 2;
+    uint256 internal constant _royaltyFractionDenominator = 100;
 
     IERC20 private BLTM;
     IERC20 private USDC;
@@ -52,6 +60,16 @@ contract BLTMLiquidityPool is Context, AccessControl {
         Mintable(address(BLTM)).mint(_msgSender(), tokenAmount);
     }
 
+    function exchangeTokenForUsdc(uint256 value) public {
+        uint256 usdcAmount = value / exchangeRate;
+        uint256 exchangeableUsdcAmount = (usdcAmount *
+            (100 - _royaltyFractionNumerator)) / _royaltyFractionDenominator;
+
+        Burnable(address(BLTM)).burnFrom(_msgSender(), value);
+
+        _safeTransfer(USDC, _msgSender(), exchangeableUsdcAmount);
+    }
+
     function _safeTransferFrom(
         IERC20 token,
         address sender,
@@ -59,6 +77,16 @@ contract BLTMLiquidityPool is Context, AccessControl {
         uint256 amount
     ) private {
         bool sent = token.transferFrom(sender, recipient, amount);
+
+        require(sent, "Token transfer failed");
+    }
+
+    function _safeTransfer(
+        IERC20 token,
+        address recipient,
+        uint256 amount
+    ) private {
+        bool sent = token.transfer(recipient, amount);
 
         require(sent, "Token transfer failed");
     }
