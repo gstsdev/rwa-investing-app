@@ -48,7 +48,7 @@ contract BLTM is ERC20, ERC20Burnable, ERC20Pausable, AccessControl {
         address account,
         uint256 value
     ) public virtual override(ERC20Burnable) onlyRole(MINTER_ROLE) whenNotPaused {
-        _burn(account, value);
+        super.burnFrom(account, value);
     }
 
     // The following functions are overrides required by Solidity.
