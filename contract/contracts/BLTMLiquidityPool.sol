@@ -70,6 +70,10 @@ contract BLTMLiquidityPool is Context, AccessControl {
         _safeTransfer(USDC, _msgSender(), exchangeableUsdcAmount);
     }
 
+    function withdrawUsdc(uint256 value) public onlyRole(OWNER_ROLE) {
+        _safeTransfer(USDC, _msgSender(), value);
+    }
+
     function _safeTransferFrom(
         IERC20 token,
         address sender,
