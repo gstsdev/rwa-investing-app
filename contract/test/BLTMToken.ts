@@ -228,17 +228,28 @@ describe("BLTMToken", function () {
     });
 
     it("Should prevent burning when contract is paused", async function () {
-      const { erc20, otherAccount } = await loadFixture(deployTokenFixture);
+      const { erc20, owner, otherAccount } = await loadFixture(
+        deployTokenFixture
+      );
 
-      const mintTx = await erc20.mint(otherAccount, 2);
+      const mintTx1 = await erc20.mint(owner, 2);
 
-      await mintTx.wait();
+      await mintTx1.wait();
+
+      const mintTx2 = await erc20.mint(otherAccount, 2);
+
+      await mintTx2.wait();
 
       const pauseTx = await erc20.pause();
 
       await pauseTx.wait();
 
       expect(await erc20.paused()).to.be.true;
+
+      await expect(erc20.burn(1)).to.revertedWithCustomError(
+        erc20,
+        "EnforcedPause"
+      );
 
       await expect(erc20.burnFrom(otherAccount, 1)).to.revertedWithCustomError(
         erc20,
