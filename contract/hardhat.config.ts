@@ -10,10 +10,18 @@ const config: HardhatUserConfig = {
     },
     hardhat: {
       forking: {
-        url: vars.get(
-          "POLYGON_AMOY_RPC",
-          "https://rpc-amoy.polygon.technology"
-        ),
+        enabled: true,
+        url: `https://polygon-amoy.g.alchemy.com/v2/${vars.get(
+          "ALCHEMY_API_KEY"
+        )}`,
+        blockNumber: 13536544,
+      },
+      chains: {
+        80002: {
+          hardforkHistory: {
+            london: 13536544,
+          },
+        },
       },
     },
   },
