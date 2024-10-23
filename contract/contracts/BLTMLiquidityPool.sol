@@ -21,7 +21,7 @@ contract BLTMLiquidityPool is Context, AccessControl {
 
     IERC20 private BLTM;
     IERC20 private USDC;
-    uint256 private exchangeRate;
+    uint256 public exchangeRate;
 
     constructor(
         address erc20TokenAddress_,
