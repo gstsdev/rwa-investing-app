@@ -6,10 +6,12 @@ import {
 import { FunctionComponent } from "react";
 import { twMerge } from "tailwind-merge";
 import { formatUnits } from "viem";
+import { useAccount } from "wagmi";
 
 interface BalanceInfoProps {}
 
 const BalanceInfo: FunctionComponent<BalanceInfoProps> = ({}) => {
+  const { isConnected } = useAccount();
   const usdcBalance = useTokenBalance(USDC_CONTRACT_ADDRESS as `0x${string}`, {
     defaultDecimals: 6,
     defaultSymbol: "USDC",
@@ -22,7 +24,8 @@ const BalanceInfo: FunctionComponent<BalanceInfoProps> = ({}) => {
   const balances = [usdcBalance, bltmBalance]
     .map((balance) => balance.data)
     .filter((data): data is NonNullable<typeof data> => data != null);
-  const disabled = usdcBalance.isLoading || bltmBalance.isLoading;
+  const disabled =
+    !isConnected || usdcBalance.isLoading || bltmBalance.isLoading;
 
   return (
     <div
