@@ -85,7 +85,7 @@ const Actions: FunctionComponent<ActionsProps> = ({ className }) => {
         {showDepositForm ? (
           <ExchangeForm
             sourceToken={{ symbol: "USDC", decimals: 6 }}
-            destToken={{ symbol: bltmSymbol, decimals: 6 }}
+            destToken={{ symbol: bltmSymbol!, decimals: 6 }}
             exchangeRate={Number(bltmExchangeRate.data || 0)}
             exchangingLabel="Depositing..."
             buttonLabel="Deposit"
@@ -95,7 +95,7 @@ const Actions: FunctionComponent<ActionsProps> = ({ className }) => {
           />
         ) : showWithdrawalForm ? (
           <ExchangeForm
-            sourceToken={{ symbol: bltmSymbol, decimals: 6 }}
+            sourceToken={{ symbol: bltmSymbol!, decimals: 6 }}
             destToken={{ symbol: "USDC", decimals: 6 }}
             exchangeRate={1 / Number(bltmExchangeRate.data || 1)}
             exchangingLabel="Withdrawing..."
