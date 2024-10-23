@@ -59,6 +59,7 @@ const Actions: FunctionComponent<ActionsProps> = ({ className }) => {
             sourceToken={{ symbol: "USDC", decimals: 6 }}
             destToken={{ symbol: bltmSymbol, decimals: 6 }}
             exchangeRate={Number(bltmExchangeRate.data || 0)}
+            onClose={() => setDepositing(false)}
           />
         ) : (
           <>

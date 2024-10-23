@@ -1,17 +1,20 @@
 import React, { FunctionComponent, useMemo, useState } from "react";
 import ActionButton from "./ActionButton";
 import Form from "../Form";
+import { ArrowLeftIcon } from "lucide-react";
 
 interface DepositFormProps {
   sourceToken: { symbol: string; decimals: number };
   destToken: { symbol: string; decimals: number };
   exchangeRate: number;
+  onClose(): any;
 }
 
 const DepositForm: FunctionComponent<DepositFormProps> = ({
   sourceToken,
   destToken,
   exchangeRate,
+  onClose,
 }) => {
   const [sourceTokenAmount, _setSourceTokenAmount] = useState<string>("1");
   const [destTokenAmount, _setDestTokenAmount] = useState<number>(
@@ -38,39 +41,51 @@ const DepositForm: FunctionComponent<DepositFormProps> = ({
   }
 
   return (
-    <form className="w-full flex flex-col bg-black-100 p-2 rounded-lg">
-      <Form.Group>
-        <Form.Label htmlFor="sourceValue">{sourceToken.symbol}</Form.Label>
+    <div className="w-full flex flex-col bg-black-100 p-2 rounded-lg">
+      <div className="flex mb-2">
+        <button
+          className="text-neutral-400 inline-flex items-center gap-1.5 text-sm"
+          onClick={onClose}
+        >
+          <ArrowLeftIcon color="currentColor" className="w-5 h-5" />
+          <span>Go Back</span>
+        </button>
+      </div>
 
-        <Form.Input
-          type="number"
-          min={0}
-          step={valueStep}
-          id="sourceValue"
-          placeholder="1"
-          value={sourceTokenAmount}
-          onChange={(e) => setSourceTokenAmount(e.target.value)}
-        />
-      </Form.Group>
+      <form>
+        <Form.Group>
+          <Form.Label htmlFor="sourceValue">{sourceToken.symbol}</Form.Label>
 
-      <Form.Group>
-        <Form.Label htmlFor="destValue">{destToken.symbol}</Form.Label>
+          <Form.Input
+            type="number"
+            min={0}
+            step={valueStep}
+            id="sourceValue"
+            placeholder="1"
+            value={sourceTokenAmount}
+            onChange={(e) => setSourceTokenAmount(e.target.value)}
+          />
+        </Form.Group>
 
-        <Form.Input
-          type="number"
-          min={0}
-          step={valueStep}
-          id="destValue"
-          placeholder="0"
-          value={destTokenAmount}
-          onChange={(e) => setDestTokenAmount(e.target.value)}
-        />
-      </Form.Group>
+        <Form.Group>
+          <Form.Label htmlFor="destValue">{destToken.symbol}</Form.Label>
 
-      <ActionButton variant="secondary" type="submit" className="w-full mt-2">
-        Deposit
-      </ActionButton>
-    </form>
+          <Form.Input
+            type="number"
+            min={0}
+            step={valueStep}
+            id="destValue"
+            placeholder="0"
+            value={destTokenAmount}
+            onChange={(e) => setDestTokenAmount(e.target.value)}
+          />
+        </Form.Group>
+
+        <ActionButton variant="secondary" type="submit" className="w-full mt-2">
+          Deposit
+        </ActionButton>
+      </form>
+    </div>
   );
 };
 
