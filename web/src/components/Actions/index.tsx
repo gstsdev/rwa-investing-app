@@ -6,10 +6,11 @@ import {
 } from "@/lib/contracts/addresses";
 import BLTMLiquidityPoolContract from "@/lib/contracts/BLTMLiquidityPool";
 import { ArrowRightIcon } from "lucide-react";
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { useReadContract } from "wagmi";
 import ActionButton from "./ActionButton";
+import DepositForm from "./DepositForm";
 
 interface ActionsProps {
   className?: string;
@@ -31,6 +32,8 @@ const Actions: FunctionComponent<ActionsProps> = ({ className }) => {
     },
   });
 
+  const [isDepositing, setDepositing] = useState(false);
+
   return (
     <div
       className={twMerge(
@@ -47,8 +50,20 @@ const Actions: FunctionComponent<ActionsProps> = ({ className }) => {
       </div>
 
       <div className="flex gap-3 mt-10">
-        <ActionButton>Deposit</ActionButton>
-        <ActionButton>Withdraw</ActionButton>
+        {isDepositing ? (
+          <DepositForm
+            sourceToken={{ symbol: "USDC", decimals: 6 }}
+            destToken={{ symbol: bltmSymbol, decimals: 6 }}
+            exchangeRate={Number(bltmExchangeRate.data || 0)}
+          />
+        ) : (
+          <>
+            <ActionButton onClick={() => setDepositing(true)}>
+              Deposit
+            </ActionButton>
+            <ActionButton>Withdraw</ActionButton>
+          </>
+        )}
       </div>
     </div>
   );

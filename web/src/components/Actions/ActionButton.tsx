@@ -5,14 +5,23 @@ type NativeButtonProps = JSX.IntrinsicElements["button"];
 interface ActionButtonProps extends NativeButtonProps {
   children?: React.ReactNode;
   className?: string;
+  variant?: "primary" | "secondary";
 }
 
-function ActionButton({ children, className, ...props }: ActionButtonProps) {
+function ActionButton({
+  variant = "primary",
+  children,
+  className,
+  ...props
+}: ActionButtonProps) {
   return (
     <button
       {...props}
       className={twMerge(
-        "flex-1 text-xl font-sans font-medium bg-sky-900 hover:bg-sky-800 transition rounded-full py-2 px-3",
+        "flex-1 text-xl font-sans font-medium transition rounded-full py-2 px-3",
+        variant === "secondary"
+          ? "bg-neutral-800 hover:bg-neutral-700"
+          : "bg-sky-900 hover:bg-sky-800",
         className
       )}
     >
