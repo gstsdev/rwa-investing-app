@@ -20,7 +20,7 @@ const BLTMLiquidityPool = buildModule("BLTMLiquidityPool", (m) => {
 
   m.call(ERC20, "grantRole", [MINTER_ROLE, LiquidityPool]);
 
-  return { LiquidityPool };
+  return { LiquidityPool, ERC20 };
 });
 
 export default BLTMLiquidityPool;
