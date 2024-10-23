@@ -75,5 +75,6 @@ The web app side was relatively easier, but setting up Reown's AppKit was also a
 
 ## TODOs
 
-[ ] "Transactions History" table
-[ ] Unit tests for the web app
+
+- [ ] "Transactions History" table
+- [ ] Unit tests for the web app
