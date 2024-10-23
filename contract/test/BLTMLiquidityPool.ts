@@ -91,6 +91,12 @@ describe("BLTMLiquidityPool", function () {
 
       await expect(LiquidityPool.updateExchangeRate(2)).to.reverted;
     });
+
+    it("Should prevent updating the exchange rate to 0", async function () {
+      const { pool } = await loadFixture(deployPoolFixture);
+
+      await expect(pool.updateExchangeRate(0)).to.reverted;
+    });
   });
 
   describe("Exchange USDC", function () {
