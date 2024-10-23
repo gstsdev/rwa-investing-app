@@ -92,7 +92,7 @@ describe("BLTMLiquidityPool", function () {
     });
   });
 
-  describe("Token Exchange", function () {
+  describe("Exchange USDC", function () {
     it("Should mint tokens proportional to the USDC provided and the exchange rate", async function () {
       const { erc20, pool, otherAccount, exchangeRate, USDC_CONTRACT_ADDRESS } =
         await loadFixture(deployPoolFixture);
@@ -144,6 +144,86 @@ describe("BLTMLiquidityPool", function () {
       await expect(
         LiquidityPool.exchangeUsdcForToken(usdcToExchange)
       ).to.revertedWith("USDC allowance too low");
+    });
+  });
+
+  describe("Exchange BLTM", function () {
+    it("Should transfer USDC proportional to the BLTM amount provided (with royalties deduced)", async function () {
+      const { erc20, pool, otherAccount, exchangeRate, USDC_CONTRACT_ADDRESS } =
+        await loadFixture(deployPoolFixture);
+
+      const ERC20 = await hre.ethers.getContractAt(
+        "BLTM",
+        await erc20.getAddress(),
+        otherAccount
+      );
+
+      const LiquidityPool = await hre.ethers.getContractAt(
+        "BLTMLiquidityPool",
+        await pool.getAddress(),
+        otherAccount
+      );
+
+      const USDC = new hre.ethers.Contract(
+        USDC_CONTRACT_ADDRESS,
+        ERC20Abi,
+        otherAccount
+      );
+
+      const usdcBalance = await USDC.balanceOf(otherAccount);
+
+      expect(usdcBalance).not.to.equal(0);
+
+      const usdcToExchange = getUSDCValue(5);
+
+      const approveUsdcTx = await USDC.approve(LiquidityPool, usdcToExchange);
+
+      await approveUsdcTx.wait();
+
+      const exchangeUsdcTx = await LiquidityPool.exchangeUsdcForToken(
+        usdcToExchange
+      );
+
+      await exchangeUsdcTx.wait();
+
+      const tokenBalance = usdcToExchange * exchangeRate;
+      const tokensToExchange = tokenBalance / 2;
+
+      const approveTokenTx = await ERC20.approve(
+        LiquidityPool,
+        tokensToExchange
+      );
+
+      await approveTokenTx.wait();
+
+      const exchangeTokenTx = await LiquidityPool.exchangeTokenForUsdc(
+        tokensToExchange
+      );
+
+      await exchangeTokenTx.wait();
+
+      const royaltiesFraction = 2 / 100;
+      const receivedUsdc =
+        (1 - royaltiesFraction) * (tokensToExchange / exchangeRate);
+      const updatedUsdcBalance =
+        hre.ethers.toNumber(usdcBalance) - usdcToExchange + receivedUsdc;
+
+      expect(await USDC.balanceOf(otherAccount)).to.equal(updatedUsdcBalance);
+    });
+
+    it("Should revert if BLTM spend allowance is insufficient", async function () {
+      const { pool, otherAccount } = await loadFixture(deployPoolFixture);
+
+      const LiquidityPool = await hre.ethers.getContractAt(
+        "BLTMLiquidityPool",
+        await pool.getAddress(),
+        otherAccount
+      );
+
+      const tokensToExchange = getUSDCValue(5);
+
+      await expect(LiquidityPool.exchangeTokenForUsdc(tokensToExchange)).to
+        .reverted;
     });
   });
 });
