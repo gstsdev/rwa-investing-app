@@ -25,6 +25,22 @@ const config: HardhatUserConfig = {
       },
     },
   },
+  etherscan: {
+    apiKey: {
+      polygonAmoy: vars.get("OKLINK_AMOY_API_KEY"),
+    },
+    customChains: [
+      {
+        network: "polygonAmoy",
+        chainId: 80002,
+        urls: {
+          apiURL:
+            "https://www.oklink.com/api/explorer/v1/contract/verify/async/api/polygonAmoy",
+          browserURL: "https://www.oklink.com/polygonAmoy",
+        },
+      },
+    ],
+  },
 };
 
 export default config;
