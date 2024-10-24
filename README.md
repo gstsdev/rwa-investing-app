@@ -42,17 +42,22 @@ npx -w contract hardhat vars set ALCHEMY_API_KEY <...>
 # Can be obtained at https://www.oklink.com/account/my-api
 npx -w contract hardhat vars set OKLINK_AMOY_API_KEY <...>
 ```
-3. Spin up Hardhat Node:
+3. In a terminal tab, spin up the Hardhat Node:
 ```shell
 npx -w contract hardhat node
 ```
-4. Add `.env` file in the `web/` folder, following the `.env.sample`
-    - Create an AppKit project at https://cloud.reown.com/app
-    - Get the contract addresses at `contract/ignition/deployments/chain-80002/deployed_addresses.json` and place them as follows:
-      * Address at `BLTMToken#BLTM` goes after `NEXT_PUBLIC_BLTM_CONTRACT_ADDRESS=`
-      * Address at `BLTMLiquidityPool#BLTMLiquidityPool` goes after `NEXT_PUBLIC_BLTM_POOL_CONTRACT_ADDRESS=`
-5. Run `npm -w web run dev`
-6. Go to http://localhost:3000 and that's it!
+4. In another terminal tab, deploy the smart contracts to the local node:
+```shell
+npx -w contract hardhat ignition deploy ./ignition/modules/BLTMLiquidityPool.ts --parameters ./ignition/parameters.json --network localhost
+```
+5. Add `.env` file in the `web/` folder, following the `.env.sample`
+    - Get the "Deployed Addresses" from the output of the command in the step 4 and place them as follows:
+      * `BLTMToken#BLTM` address goes in `NEXT_PUBLIC_BLTM_CONTRACT_ADDRESS=`
+      * `BLTMLiquidityPool#BLTMLiquidityPool` address goes in `NEXT_PUBLIC_BLTM_POOL_CONTRACT_ADDRESS=`
+    - Create an AppKit project at https://cloud.reown.com/app and set the project id in `NEXT_PUBLIC_APPKIT_PROJECT_ID=`
+6. Run `npm -w web run dev`
+7. Go to http://localhost:3000 and that's it!
+   - If nothing happens at the first load, try refreshing the page.
 
 ## Approach
 
