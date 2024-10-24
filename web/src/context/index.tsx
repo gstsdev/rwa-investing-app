@@ -21,9 +21,9 @@ if (!projectId) {
 // Set up metadata
 const metadata = {
   name: "BL Challenge",
-  description: "AppKit Example",
-  url: "https://reown.com/appkit", // origin must match your domain & subdomain
-  icons: ["https://assets.reown.com/reown-profile-pic.png"],
+  description: "",
+  url: process.env.VERCEL_PROJECT_PRODUCTION_URL || "https://reown.com/appkit", // origin must match your domain & subdomain
+  icons: [],
 };
 
 // Create the modal
