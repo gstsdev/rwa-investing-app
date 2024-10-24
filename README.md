@@ -4,6 +4,8 @@ This is a monorepo containing the Solidity smart contracts and the Next.js proje
 
 In this app, you can exchange ("Deposit") USDC for BLTM (the app token) and exchange BLTM for USDC ("Withdraw"). You can also see your BLTM balance.
 
+✅ Live version at https://blank-labs-code-challenge-web.vercel.app/
+
 ## Tech Stack
 
 - Contracts
